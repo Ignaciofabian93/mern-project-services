@@ -7,15 +7,19 @@ const serverError = "Server error";
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, lastname, email, password } = req.body;
     const checkMail = await User.findOne({ email: email });
     if (checkMail) {
       res.status(400).json({ message: "Email already exists" });
     } else {
       const salt = await genSalt(10);
       const hashedPassword = await hash(password, salt);
-      const user = await User.create({ name, email, password: hashedPassword });
-      console.log("user: ", user);
+      const user = await User.create({
+        name,
+        lastname,
+        email,
+        password: hashedPassword,
+      });
       if (user) {
         res.status(201).json({ message: "User created successfully" });
       } else {
@@ -39,9 +43,21 @@ export const loginUser = async (req: Request, res: Response) => {
         });
         res.status(200).json({ message: "Login successful", token: token });
       } else {
-        res.status(400).json({ message: "Invalid credentials" });
+        res.status(401).json({ message: "Invalid credentials" });
       }
     }
+  } catch (error) {
+    res.status(500).json({ message: serverError });
+  }
+};
+
+export const getUserData = async (req: Request, res: Response) => {
+  try {
+    const { _id, name, lastname, email } = await User.findById(
+      req.body.user.id
+    );
+    const userData = { _id, name, lastname, email };
+    res.status(200).json({ message: "Data retrieved successfully", userData });
   } catch (error) {
     res.status(500).json({ message: serverError });
   }

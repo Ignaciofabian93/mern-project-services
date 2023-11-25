@@ -10,7 +10,7 @@ export const registerUser = async (req: Request, res: Response) => {
     const { name, lastname, email, password } = req.body;
     const checkMail = await User.findOne({ email: email });
     if (checkMail) {
-      res.status(400).json({ message: "Email already exists" });
+      res.json({ message: "Email already exists" });
     } else {
       const salt = await genSalt(10);
       const hashedPassword = await hash(password, salt);

@@ -16,6 +16,8 @@ app.use(cors({ origin: "*" }));
 
 app.use("/api", userRouter);
 
+console.log("nueva rama!!!!");
+
 app.listen(PORT, () => {
   console.log(`Server running on port: ${PORT}`);
 });

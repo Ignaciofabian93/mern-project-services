@@ -62,3 +62,20 @@ export const getUserData = async (req: Request, res: Response) => {
     res.status(500).json({ message: serverError });
   }
 };
+
+export const updatePassword = async (req: Request, res: Response) => {
+  try {
+    const { password } = req.body;
+
+    if (!password)
+      return res.status(400).json({ message: "Password is required" });
+    const salt = await genSalt(10);
+    const hashedPassword = await hash(password, salt);
+    await User.findByIdAndUpdate(req.body.user.id, {
+      password: hashedPassword,
+    });
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    res.status(500).json({ message: serverError });
+  }
+};

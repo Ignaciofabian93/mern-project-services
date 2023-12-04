@@ -12,17 +12,24 @@ export const protect = async (
 ) => {
   try {
     const tokenHeader = req.headers.authorization;
+
     if (!tokenHeader) {
-      res.status(401).json({ message: "Not authorized" });
+      return res.status(401).json({ message: "Not authorized" });
     }
     if (!tokenHeader.startsWith("Bearer ")) {
-      res.status(401).json({ message: "Invalid token format" });
+      return res.status(401).json({ message: "Invalid token format" });
     }
     const token = tokenHeader.replace("Bearer ", "");
     const decoded = jwt.verify(token, process.env.JWT_TOKEN) as JwtPayload;
-    req.body.user = await User.findById(decoded.id).select("-password");
+
+    const user = await User.findById(decoded.id).select("-password");
+
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+    req.body.user = user;
     next();
   } catch (error) {
-    res.status(401).json({ message: "Not authorized" });
+    res.status(401).json({ message: `Not authorized, ${error}` });
   }
 };

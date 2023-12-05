@@ -21,5 +21,4 @@ app.use("/api", userRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on port: ${PORT}`);
-  console.log(`MongoDB URI: ${process.env.MONGO_URI}`);
 });

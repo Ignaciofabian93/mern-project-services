@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import { config } from "dotenv";
 import connectDB from "./config/database";
@@ -14,6 +14,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: "*" }));
 
+app.get("/", (req: Request, res: Response) => {
+  res.status(200).json({ message: "ok" });
+});
 app.use("/api", userRouter);
 
 app.listen(PORT, () => {
